@@ -6,10 +6,8 @@ mod init;
 mod remove;
 #[path = "commands/reset.rs"]
 mod reset;
-#[path = "commands/set_repo.rs"]
-mod set_repo;
-#[path = "commands/set_routes.rs"]
-mod set_routes;
+#[path = "commands/update.rs"]
+mod update;
 #[path = "commands/show.rs"]
 mod show;
 #[path = "commands/validate.rs"]

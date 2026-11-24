@@ -1,5 +1,7 @@
 # Composite Domain - Register CLI tool (cdreg)
 
+CLI tool for use with [composite-domain](https://github.com/tracerview/composite-domain).
+
 Manages `composite-domain-register.json` — the register that maps logical composite domain parts to their Cloudflare workers and routes.
 
 ## Contents
@@ -12,7 +14,7 @@ Manages `composite-domain-register.json` — the register that maps logical comp
 ## 1. Install
 
 ```sh
-mise use "github:tracerview/composite-domain-register[exe=cdreg]"
+mise use "github:tracerview/cdreg"
 ```
 
 Run `cdreg -h` for a full command reference, or `cdreg <command> -h` for details on a specific command.

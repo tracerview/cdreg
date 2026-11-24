@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "cdreg", about = "Manage the composite domain register")]
+#[command(name = "cdreg", about = "Manage the composite domain register", version)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Command,
@@ -18,7 +18,7 @@ pub enum Command {
     /// Register a new composite part
     Add {
         /// Logical name (kebab-case)
-        name: String,
+        part_name: String,
         /// Cloudflare worker name (must start with cp-)
         #[arg(long)]
         worker: String,
@@ -26,28 +26,21 @@ pub enum Command {
         #[arg(long = "route", required = true)]
         routes: Vec<String>,
     },
-    /// Assign the GitHub repo to a part
-    SetRepo {
+    /// Update repo or routes for a part
+    Update {
         /// Logical name of the part
-        name: String,
+        part_name: String,
         /// GitHub repo in org/repo format
-        repo: String,
-        /// Overwrite if repo is already set
         #[arg(long)]
-        force: bool,
-    },
-    /// Replace route patterns for a part
-    SetRoutes {
-        /// Logical name of the part
-        name: String,
-        /// One or more route patterns
-        #[arg(required = true)]
-        routes: Vec<String>,
+        repo: Option<String>,
+        /// Route pattern (repeatable)
+        #[arg(long = "routes", num_args = 1..)]
+        routes: Option<Vec<String>>,
     },
     /// Remove a composite part
     Remove {
         /// Logical name of the part
-        name: String,
+        part_name: String,
         /// Skip confirmation prompt
         #[arg(long)]
         yes: bool,
