@@ -53,7 +53,7 @@ cdreg add landingpage --worker cp-landingpage-static --route "example.com/*"
 The part is added immediately with `repo: TBC`. Once the GitHub repo exists, assign it:
 
 ```sh
-cdreg set-repo landingpage gh-org/repo-landingpage
+cdreg update landingpage --repo gh-org/repo-landingpage
 ```
 
 **Check the current state at any time:**
@@ -67,13 +67,21 @@ Parts with an unassigned repo are flagged with `[!]`.
 **Update routes when they change:**
 
 ```sh
-cdreg set-routes landingpage "example.com/" "example.com/*"
+cdreg update landingpage --routes "example.com/" "example.com/*"
 ```
 
 **Remove a part that's been retired:**
 
 ```sh
 cdreg remove landingpage
+```
+
+Pass `--yes` to skip the confirmation prompt.
+
+**Delete the register entirely:**
+
+```sh
+cdreg reset
 ```
 
 **Validate before committing:**
