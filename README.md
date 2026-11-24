@@ -5,7 +5,14 @@ Manages `composite-domain-register.json` — the register that maps logical comp
 ## Install
 
 ```sh
-mise use "ubi:tracerview/composite-domain-register[exe=cdreg]"
+mise use "github:tracerview/composite-domain-register[exe=cdreg]"
+```
+
+This adds to `.mise.toml`:
+
+```toml
+[tools]
+"github:tracerview/composite-domain-register[exe=cdreg]" = "latest"
 ```
 
 Run `cdreg -h` for a full command reference, or `cdreg <command> -h` for details on a specific command.
