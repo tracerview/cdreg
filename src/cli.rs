@@ -26,23 +26,16 @@ pub enum Command {
         #[arg(long = "route", required = true)]
         routes: Vec<String>,
     },
-    /// Assign the GitHub repo to a part
-    SetRepo {
+    /// Update repo or routes for a part
+    Update {
         /// Logical name of the part
         name: String,
         /// GitHub repo in org/repo format
-        repo: String,
-        /// Overwrite if repo is already set
         #[arg(long)]
-        force: bool,
-    },
-    /// Replace route patterns for a part
-    SetRoutes {
-        /// Logical name of the part
-        name: String,
-        /// One or more route patterns
-        #[arg(required = true)]
-        routes: Vec<String>,
+        repo: Option<String>,
+        /// Route pattern (repeatable)
+        #[arg(long = "routes", num_args = 1..)]
+        routes: Option<Vec<String>>,
     },
     /// Remove a composite part
     Remove {

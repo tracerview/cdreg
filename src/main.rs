@@ -12,8 +12,7 @@ fn main() -> Result<()> {
     match cli.command {
         Command::Init { zone } => commands::init::run(zone),
         Command::Add { name, worker, routes } => commands::add::run(name, worker, routes),
-        Command::SetRepo { name, repo, force } => commands::set_repo::run(name, repo, force),
-        Command::SetRoutes { name, routes } => commands::set_routes::run(name, routes),
+        Command::Update { name, repo, routes } => commands::update::run(name, repo, routes),
         Command::Remove { name, yes } => commands::remove::run(name, yes),
         Command::Validate => commands::validate::run(),
         Command::Show => commands::show::run(),

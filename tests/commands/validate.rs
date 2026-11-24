@@ -19,7 +19,7 @@ fn valid_register_exits_zero() {
     cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
     cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
-    cmd(&dir).args(["set-repo", "landingpage", "tracerview/repo"]).assert().success();
+    cmd(&dir).args(["update", "landingpage", "--repo=tracerview/repo"]).assert().success();
     cmd(&dir).arg("validate").assert().success().stdout(contains("valid"));
 }
 
