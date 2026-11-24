@@ -44,7 +44,7 @@ cd my-domain-repo
 cdreg init --zone example.com
 ```
 
-This also adds an Apex A record to `terraform/main.tf`. When routing via wrangler (cfops default), this is created automatically — since this composite method manages routing via a central Terraform config, `init` adds it explicitly:
+This automatically adds an Apex A record to `terraform/main.tf`. When routing via wrangler (cfops default), this is created automatically — since this composite method manages routing via a central Terraform config, `init` adds it explicitly:
 
 ```hcl
 resource "cloudflare_record" "apex" {
@@ -67,11 +67,26 @@ dig <DOMAIN> A
 ```sh
 cdreg add landingpage --worker cp-landingpage-static --route "example.com/*"
 ```
-
 The part is added immediately with `repo: TBC`. Once the GitHub repo exists, assign it:
 
 ```sh
 cdreg update landingpage --repo gh-org/repo-landingpage
+```
+
+This automatically adds a `cloudflare_workers_route` resource to `terraform/workers.tf` for each route — for example:
+
+```hcl
+resource "cloudflare_workers_route" "landingpage_0" {
+  zone_id     = cloudflare_zone.acme.id
+  pattern     = "acme.com"
+  script_name = "cp-landingpage-static"
+}
+
+resource "cloudflare_workers_route" "landingpage_1" {
+  zone_id     = cloudflare_zone.acme.id
+  pattern     = "acme.com/*"
+  script_name = "cp-landingpage-static"
+}
 ```
 
 **2.3. Check the current state at any time:**
