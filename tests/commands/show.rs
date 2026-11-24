@@ -50,6 +50,18 @@ fn flags_tbc_repo_in_output() {
 }
 
 #[test]
+fn shows_part_name_column_header() {
+    let dir = TempDir::new().unwrap();
+    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+        .assert().success();
+
+    cmd(&dir).arg("show")
+        .assert().success()
+        .stdout(contains("PART-NAME"));
+}
+
+#[test]
 fn errors_if_register_missing() {
     let dir = TempDir::new().unwrap();
     cmd(&dir).arg("show").assert().failure().stderr(contains("init"));
