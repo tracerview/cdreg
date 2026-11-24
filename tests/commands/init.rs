@@ -24,7 +24,7 @@ fn errors_if_register_already_exists() {
     let dir = TempDir::new().unwrap();
     cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
     cmd(&dir).args(["init", "--zone", "example.com"])
-        .assert().failure().stderr(contains("already exists"));
+        .assert().failure().stderr(contains("already exists")).stderr(contains("cdreg reset"));
 }
 
 #[test]

@@ -26,14 +26,13 @@ pub fn load() -> Result<Register> {
     let path = Path::new(REGISTER_FILE);
     if !path.exists() {
         bail!(
-            "{} not found — run `cdreg init --zone <DOMAIN>` first",
-            REGISTER_FILE
+            "composite domain register not found — run `cdreg init --zone <DOMAIN>` first"
         );
     }
     let raw = fs::read_to_string(path)
-        .with_context(|| format!("failed to read {}", REGISTER_FILE))?;
+        .with_context(|| "failed to read the composite domain register")?;
     let register: Register = serde_json::from_str(&raw)
-        .with_context(|| format!("{} contains invalid JSON", REGISTER_FILE))?;
+        .with_context(|| "composite domain register contains invalid JSON")?;
     Ok(register)
 }
 
@@ -42,7 +41,7 @@ pub fn save(register: &Register) -> Result<()> {
     validate_against_schema(&value)?;
     let json = serde_json::to_string_pretty(register)?;
     fs::write(REGISTER_FILE, json + "\n")
-        .with_context(|| format!("failed to write {}", REGISTER_FILE))?;
+        .with_context(|| "failed to write the composite domain register")?;
     Ok(())
 }
 
