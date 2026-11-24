@@ -5,13 +5,13 @@ use std::path::Path;
 
 pub fn run() -> Result<()> {
     if !Path::new(REGISTER_FILE).exists() {
-        anyhow::bail!("{} not found", REGISTER_FILE);
+        anyhow::bail!("composite domain register not found");
     }
 
     let raw = fs::read_to_string(REGISTER_FILE)?;
 
     let value: serde_json::Value = serde_json::from_str(&raw)
-        .map_err(|e| anyhow::anyhow!("{} contains invalid JSON: {}", REGISTER_FILE, e))?;
+        .map_err(|e| anyhow::anyhow!("composite domain register contains invalid JSON: {}", e))?;
 
     register::validate_against_schema(&value)?;
 
@@ -28,6 +28,6 @@ pub fn run() -> Result<()> {
         eprintln!("warning: repo for {:?} is TBC", name);
     }
 
-    println!("{} is valid", REGISTER_FILE);
+    println!("composite domain register is valid");
     Ok(())
 }
