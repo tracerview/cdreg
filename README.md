@@ -1,8 +1,15 @@
-# cdreg
+# Composite Domain - Register CLI tool (cdreg)
 
 Manages `composite-domain-register.json` — the register that maps logical composite domain parts to their Cloudflare workers and routes.
 
-## Install
+## Contents
+
+- [1. Install](#1-install)
+- [2. Typical workflow](#2-typical-workflow)
+- [3. Register format](#3-register-format)
+- [4. Releasing new versions of cdreg](#4-releasing-a-new-version)
+
+## 1. Install
 
 ```sh
 mise use "github:tracerview/composite-domain-register[exe=cdreg]"
@@ -10,7 +17,7 @@ mise use "github:tracerview/composite-domain-register[exe=cdreg]"
 
 Run `cdreg -h` for a full command reference, or `cdreg <command> -h` for details on a specific command.
 
-## Typical workflow
+## 2. Typical workflow
 
 **Start a new domain register:**
 
@@ -59,7 +66,7 @@ cdreg validate
 
 Exits non-zero on schema errors. Warns (but still exits 0) if any repos remain `TBC`.
 
-## Register format
+## 3. Register format
 
 `composite-domain-register.json` lives in the repo root alongside this tool's config. See [`schema.json`](./schema.json) for the full schema.
 
@@ -78,7 +85,7 @@ Exits non-zero on schema errors. Warns (but still exits 0) if any repos remain `
 
 Worker names must be prefixed `cp-`. Routes follow [Cloudflare route pattern syntax](https://developers.cloudflare.com/workers/configuration/routing/routes/) — wildcards only at the start of the hostname or end of the path, no query strings or fragments.
 
-## Releasing a new version
+## 4. Releasing new versions of cdreg
 
 ```sh
 cargo install cargo-release   # one-time
