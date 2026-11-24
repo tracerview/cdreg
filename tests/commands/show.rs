@@ -23,9 +23,9 @@ fn init(dir: &TempDir) {
 fn shows_zone_and_all_parts() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "partone", "--worker", "cp-partone-static", "--routes", "example.com/one/*"])
+    cmd(&dir).args(["add", "partone", "--worker", "cp-partone-static", "--route", "example.com/one/*"])
         .assert().success();
-    cmd(&dir).args(["add", "parttwo", "--worker", "cp-parttwo-static", "--routes", "example.com/two/*"])
+    cmd(&dir).args(["add", "parttwo", "--worker", "cp-parttwo-static", "--route", "example.com/two/*"])
         .assert().success();
 
     cmd(&dir).arg("show")
@@ -51,7 +51,7 @@ fn indicates_no_parts_when_empty() {
 fn flags_tbc_repo_in_output() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
 
     cmd(&dir).arg("show")
@@ -64,7 +64,7 @@ fn flags_tbc_repo_in_output() {
 fn shows_part_name_column_header() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
 
     cmd(&dir).arg("show")
