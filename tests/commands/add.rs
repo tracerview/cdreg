@@ -95,7 +95,7 @@ fn errors_if_register_missing() {
 }
 
 #[test]
-fn creates_workers_tf_and_adds_route() {
+fn creates_workers_tf_with_indexed_resource() {
     let dir = TempDir::new().unwrap();
     init(&dir);
     cmd(&dir)
@@ -103,30 +103,31 @@ fn creates_workers_tf_and_adds_route() {
         .assert().success();
 
     let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
-    assert!(tf.contains("resource \"cloudflare_workers_route\" \"landingpage\""));
+    assert!(tf.contains("resource \"cloudflare_workers_route\" \"landingpage_0\""));
     assert!(tf.contains("cloudflare_zone.example.id"));
     assert!(tf.contains("pattern     = \"example.com/*\""));
     assert!(tf.contains("script_name = \"cp-landingpage-static\""));
 }
 
 #[test]
-fn uses_first_route_in_workers_tf() {
+fn writes_all_routes_indexed_to_workers_tf() {
     let dir = TempDir::new().unwrap();
     init(&dir);
     cmd(&dir)
         .args(["add", "landingpage", "--worker", "cp-landingpage-static",
-               "--routes", "example.com/a", "--routes", "example.com/a/*"])
+               "--routes", "example.com/blog/", "--routes", "example.com/blog/*"])
         .assert().success();
 
     let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
-    assert!(tf.contains("pattern     = \"example.com/a\""));
-    assert!(!tf.contains("example.com/a/*"));
+    assert!(tf.contains("resource \"cloudflare_workers_route\" \"landingpage_0\""));
+    assert!(tf.contains("pattern     = \"example.com/blog/\""));
+    assert!(tf.contains("resource \"cloudflare_workers_route\" \"landingpage_1\""));
+    assert!(tf.contains("pattern     = \"example.com/blog/*\""));
 }
 
 #[test]
 fn errors_if_terraform_dir_missing_on_add() {
     let dir = TempDir::new().unwrap();
-    // Write register directly — no terraform/ dir
     std::fs::write(
         dir.path().join("composite-domain-register.json"),
         "{\"zone\":\"example.com\",\"parts\":{}}\n",
@@ -140,10 +141,9 @@ fn errors_if_terraform_dir_missing_on_add() {
 fn errors_on_workers_route_conflict() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    // Pre-populate workers.tf with a conflicting resource
     std::fs::write(
         dir.path().join("terraform/workers.tf"),
-        "resource \"cloudflare_workers_route\" \"landingpage\" {\n  zone_id = cloudflare_zone.example.id\n}\n",
+        "resource \"cloudflare_workers_route\" \"landingpage_0\" {\n  zone_id     = cloudflare_zone.example.id\n  pattern     = \"example.com/*\"\n  script_name = \"cp-landingpage-static\"\n}\n",
     ).unwrap();
     cmd(&dir)
         .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])

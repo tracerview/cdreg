@@ -35,7 +35,7 @@ pub fn run(name: String, worker: String, routes: Vec<String>) -> Result<()> {
     println!("Added part {:?}", name);
 
     let zone_name = crate::terraform::infer_zone_name(&reg.zone);
-    crate::terraform::add_workers_route(&name, &zone_name, &routes[0], &worker)?;
+    crate::terraform::add_workers_routes(&name, &zone_name, &routes, &worker)?;
 
     Ok(())
 }

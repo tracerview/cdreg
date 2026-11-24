@@ -82,7 +82,7 @@ fn removes_workers_route_from_workers_tf() {
     cmd(&dir).args(["remove", "landingpage", "--yes"]).assert().success();
 
     let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
-    assert!(!tf.contains("resource \"cloudflare_workers_route\" \"landingpage\""));
+    assert!(!tf.contains("resource \"cloudflare_workers_route\" \"landingpage_0\""));
 }
 
 #[test]

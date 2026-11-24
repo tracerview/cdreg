@@ -24,7 +24,7 @@ pub fn run(name: String, yes: bool) -> Result<()> {
     register::save(&reg)?;
     println!("Removed part {:?}", name);
 
-    crate::terraform::remove_workers_route(&name)?;
+    crate::terraform::remove_workers_routes(&name)?;
 
     Ok(())
 }
