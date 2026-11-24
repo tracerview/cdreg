@@ -8,10 +8,21 @@ fn cmd(dir: &TempDir) -> Command {
     c
 }
 
+fn setup_terraform(dir: &TempDir) {
+    let tf_dir = dir.path().join("terraform");
+    std::fs::create_dir_all(&tf_dir).unwrap();
+    std::fs::write(tf_dir.join("main.tf"), "# placeholder\n").unwrap();
+}
+
+fn init(dir: &TempDir) {
+    setup_terraform(dir);
+    cmd(dir).args(["init", "--zone", "example.com"]).write_stdin("\n").assert().success();
+}
+
 #[test]
 fn shows_zone_and_all_parts() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    init(&dir);
     cmd(&dir).args(["add", "partone", "--worker", "cp-partone-static", "--route", "example.com/one/*"])
         .assert().success();
     cmd(&dir).args(["add", "parttwo", "--worker", "cp-parttwo-static", "--route", "example.com/two/*"])
@@ -29,7 +40,7 @@ fn shows_zone_and_all_parts() {
 #[test]
 fn indicates_no_parts_when_empty() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    init(&dir);
     cmd(&dir).arg("show")
         .assert().success()
         .stdout(contains("example.com"))
@@ -39,7 +50,7 @@ fn indicates_no_parts_when_empty() {
 #[test]
 fn flags_tbc_repo_in_output() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    init(&dir);
     cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
 
@@ -52,7 +63,7 @@ fn flags_tbc_repo_in_output() {
 #[test]
 fn shows_part_name_column_header() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    init(&dir);
     cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
 
