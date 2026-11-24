@@ -8,8 +8,15 @@ fn cmd(dir: &TempDir) -> Command {
     c
 }
 
+fn setup_terraform(dir: &TempDir) {
+    let tf_dir = dir.path().join("terraform");
+    std::fs::create_dir_all(&tf_dir).unwrap();
+    std::fs::write(tf_dir.join("main.tf"), "# placeholder\n").unwrap();
+}
+
 fn init_with_part(dir: &TempDir) {
-    cmd(dir).args(["init", "--zone", "example.com"]).assert().success();
+    setup_terraform(dir);
+    cmd(dir).args(["init", "--zone", "example.com"]).write_stdin("\n").assert().success();
     cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
 }

@@ -9,6 +9,17 @@ fn cmd(dir: &TempDir) -> Command {
     c
 }
 
+fn setup_terraform(dir: &TempDir) {
+    let tf_dir = dir.path().join("terraform");
+    fs::create_dir_all(&tf_dir).unwrap();
+    fs::write(tf_dir.join("main.tf"), "# placeholder\n").unwrap();
+}
+
+fn init(dir: &TempDir) {
+    setup_terraform(dir);
+    cmd(dir).args(["init", "--zone", "example.com"]).write_stdin("\n").assert().success();
+}
+
 fn write_register(dir: &TempDir, content: &str) {
     fs::write(dir.path().join("composite-domain-register.json"), content).unwrap();
 }
@@ -16,7 +27,7 @@ fn write_register(dir: &TempDir, content: &str) {
 #[test]
 fn valid_register_exits_zero() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    init(&dir);
     cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
     cmd(&dir).args(["update", "landingpage", "--repo=tracerview/repo"]).assert().success();
@@ -26,7 +37,7 @@ fn valid_register_exits_zero() {
 #[test]
 fn tbc_repo_warns_but_exits_zero() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["init", "--zone", "example.com"]).assert().success();
+    init(&dir);
     cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
     cmd(&dir).arg("validate")
