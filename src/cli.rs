@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
-#[command(name = "cdreg", about = "Manage the composite domain register")]
+#[command(name = "cdreg", about = "Manage the composite domain register", version)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Command,
