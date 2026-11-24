@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "required": ["zone", "parts"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "zone": {
+      "type": "string",
+      "description": "The domain zone this composite register manages (e.g. example.com)"
+    },
+    "parts": {
+      "type": "object",
+      "description": "Map of logical part names to their composite domain part config",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["repo", "routes", "worker"],
+        "additionalProperties": false,
+        "properties": {
+          "repo": {
+            "type": "string",
+            "description": "GitHub repo in org/repo format, or TBC if not yet assigned"
+          },
+          "routes": {
+            "type": "array",
+            "description": "Cloudflare route patterns mapped to this composite part",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "worker": {
+            "type": "string",
+            "description": "Cloudflare worker name, must be prefixed with cp-",
+            "pattern": "^cp-"
+          }
+        }
+      }
+    }
+  }
+}
