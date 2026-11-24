@@ -59,11 +59,18 @@ pub fn run(name: String, repo: Option<String>, routes: Option<Vec<String>>) -> R
         }
     }
 
+    let new_first_route = routes.as_ref().map(|rs| rs[0].clone());
+
     let part = reg.parts.get_mut(&name).unwrap();
     if let Some(r) = repo { part.repo = r; }
     if let Some(r) = routes { part.routes = r; }
 
     register::save(&reg)?;
     println!("Updated {:?}", name);
+
+    if let Some(pattern) = new_first_route {
+        crate::terraform::update_workers_route_pattern(&name, &pattern)?;
+    }
+
     Ok(())
 }

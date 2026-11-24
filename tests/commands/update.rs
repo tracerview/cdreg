@@ -136,3 +136,39 @@ fn errors_if_register_missing() {
     cmd(&dir).args(["update", "landingpage", "--repo=tracerview/repo"])
         .assert().failure().stderr(contains("init"));
 }
+
+#[test]
+fn updates_workers_tf_pattern_on_route_change() {
+    let dir = TempDir::new().unwrap();
+    init_with_part(&dir);
+    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+        .write_stdin("y\n")
+        .assert().success();
+
+    let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
+    assert!(tf.contains("pattern     = \"example.com/new/*\""));
+    assert!(!tf.contains("pattern     = \"example.com/*\""));
+}
+
+#[test]
+fn workers_tf_unchanged_on_repo_only_update() {
+    let dir = TempDir::new().unwrap();
+    init_with_part(&dir);
+    let before = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
+
+    cmd(&dir).args(["update", "landingpage", "--repo=tracerview/repo-landingpage"])
+        .assert().success();
+
+    let after = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
+    assert_eq!(before, after);
+}
+
+#[test]
+fn update_route_no_op_if_workers_tf_missing() {
+    let dir = TempDir::new().unwrap();
+    init_with_part(&dir);
+    std::fs::remove_file(dir.path().join("terraform/workers.tf")).unwrap();
+    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+        .write_stdin("y\n")
+        .assert().success();
+}

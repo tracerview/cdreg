@@ -27,11 +27,15 @@ pub fn run(name: String, worker: String, routes: Vec<String>) -> Result<()> {
 
     reg.parts.insert(name.clone(), Part {
         repo: "TBC".to_string(),
-        worker,
-        routes,
+        worker: worker.clone(),
+        routes: routes.clone(),
     });
 
     register::save(&reg)?;
     println!("Added part {:?}", name);
+
+    let zone_name = crate::terraform::infer_zone_name(&reg.zone);
+    crate::terraform::add_workers_route(&name, &zone_name, &routes[0], &worker)?;
+
     Ok(())
 }
