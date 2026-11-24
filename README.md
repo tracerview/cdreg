@@ -1,78 +1,67 @@
 # cdreg
 
-CLI for maintaining `composite-domain-register.json` — the register that maps logical composite domain parts to Cloudflare workers and routes.
+Manages `composite-domain-register.json` — the register that maps logical composite domain parts to their Cloudflare workers and routes.
 
 ## Install
 
 ```sh
-mise use ubi:tracerview/cdreg
+mise use "ubi:tracerview/composite-domain-register[exe=cdreg]"
 ```
 
-Requires [mise](https://mise.jdx.dev/) with the `ubi` backend.
+Run `cdreg -h` for a full command reference, or `cdreg <command> -h` for details on a specific command.
 
-## Commands
+## Typical workflow
 
-### `cdreg init --zone <DOMAIN>`
-
-Create a new register in the current directory.
+**Start a new domain register:**
 
 ```sh
+cd my-domain-repo
 cdreg init --zone example.com
 ```
 
-### `cdreg add <NAME> --worker <WORKER> --route <PATTERN> [--route <PATTERN>...]`
-
-Register a new composite part. `repo` is set to `TBC` until assigned.
+**Register a composite part as you create it:**
 
 ```sh
 cdreg add landingpage --worker cp-landingpage-static --route "example.com/*"
 ```
 
-### `cdreg set-repo <NAME> <org/repo>`
-
-Assign the GitHub repo to a part. Use `--force` to overwrite an existing value.
+The part is added immediately with `repo: TBC`. Once the GitHub repo exists, assign it:
 
 ```sh
-cdreg set-repo landingpage tracerview/repo-landingpage
-cdreg set-repo landingpage tracerview/repo-landingpage --force
+cdreg set-repo landingpage gh-org/repo-landingpage
 ```
 
-### `cdreg set-routes <NAME> <PATTERN> [<PATTERN>...]`
-
-Replace the route patterns for a part.
-
-```sh
-cdreg set-routes landingpage "example.com/" "example.com/*"
-```
-
-### `cdreg remove <NAME>`
-
-Remove a part. Prompts for confirmation unless `--yes` is passed.
-
-```sh
-cdreg remove landingpage
-cdreg remove landingpage --yes
-```
-
-### `cdreg validate`
-
-Validate the register against the schema. Warns on `TBC` repos but exits 0 if otherwise valid.
-
-```sh
-cdreg validate
-```
-
-### `cdreg show`
-
-Print a summary of the current register state.
+**Check the current state at any time:**
 
 ```sh
 cdreg show
 ```
 
+Parts with an unassigned repo are flagged with `[!]`.
+
+**Update routes when they change:**
+
+```sh
+cdreg set-routes landingpage "example.com/" "example.com/*"
+```
+
+**Remove a part that's been retired:**
+
+```sh
+cdreg remove landingpage
+```
+
+**Validate before committing:**
+
+```sh
+cdreg validate
+```
+
+Exits non-zero on schema errors. Warns (but still exits 0) if any repos remain `TBC`.
+
 ## Register format
 
-The register is `composite-domain-register.json` in the current directory. Schema: [`schema.json`](./schema.json).
+`composite-domain-register.json` lives in the repo root alongside this tool's config. See [`schema.json`](./schema.json) for the full schema.
 
 ```json
 {
@@ -80,24 +69,20 @@ The register is `composite-domain-register.json` in the current directory. Schem
   "parts": {
     "landingpage": {
       "worker": "cp-landingpage-static",
-      "repo": "tracerview/repo-landingpage",
+      "repo": "gh-org/repo-landingpage",
       "routes": ["example.com/*"]
     }
   }
 }
 ```
 
-Workers must be prefixed `cp-`. Routes must be valid Cloudflare route patterns (no infix wildcards, no `?` or `#`, hostname must contain a dot).
+Worker names must be prefixed `cp-`. Routes follow [Cloudflare route pattern syntax](https://developers.cloudflare.com/workers/configuration/routing/routes/) — wildcards only at the start of the hostname or end of the path, no query strings or fragments.
 
-## Contributing
-
-### Release
-
-Releases are cut by pushing a version tag. The GitHub Actions workflow builds binaries for macOS arm64/x86_64 and Linux x86_64 and publishes them to GitHub Releases.
+## Releasing a new version
 
 ```sh
 cargo install cargo-release   # one-time
 cargo release patch           # or minor / major
 ```
 
-This bumps the version in `Cargo.toml`, commits, tags `v<version>`, and pushes — triggering the release workflow.
+This bumps `Cargo.toml`, commits, tags `v<version>`, and pushes. GitHub Actions builds and publishes binaries for macOS arm64/x86_64 and Linux x86_64.
