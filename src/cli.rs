@@ -18,7 +18,7 @@ pub enum Command {
     /// Register a new composite part
     Add {
         /// Logical name (kebab-case)
-        name: String,
+        part_name: String,
         /// Cloudflare worker name (must start with cp-)
         #[arg(long)]
         worker: String,
@@ -29,7 +29,7 @@ pub enum Command {
     /// Update repo or routes for a part
     Update {
         /// Logical name of the part
-        name: String,
+        part_name: String,
         /// GitHub repo in org/repo format
         #[arg(long)]
         repo: Option<String>,
@@ -40,7 +40,7 @@ pub enum Command {
     /// Remove a composite part
     Remove {
         /// Logical name of the part
-        name: String,
+        part_name: String,
         /// Skip confirmation prompt
         #[arg(long)]
         yes: bool,
