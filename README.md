@@ -13,6 +13,22 @@ Manages `composite-domain-register.json` — the register that maps logical comp
 
 ## 1. Install
 
+### 1.1 Prerequisites: mise
+
+[mise](https://mise.jdx.dev/) is required to install cdreg.
+
+| Tool | Purpose | Install |
+|------|---------|---------|
+| [mise](https://mise.jdx.dev/) | Per-project tool management | `brew install mise` |
+
+Add to `~/.zshrc` (once per machine):
+
+```zsh
+eval "$(mise activate zsh)"
+```
+
+### 1.2 Install cdreg
+
 ```sh
 mise use "github:tracerview/cdreg"
 ```
