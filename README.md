@@ -12,7 +12,7 @@ Manages `composite-domain-register.json` — the register that maps logical comp
 ## 1. Install
 
 ```sh
-mise use "github:tracerview/composite-domain-register[exe=cdreg]"
+mise use "github:tracerview/cdreg"
 ```
 
 Run `cdreg -h` for a full command reference, or `cdreg <command> -h` for details on a specific command.
