@@ -17,7 +17,7 @@ fn setup_terraform(dir: &TempDir) {
 fn init_with_part(dir: &TempDir) {
     setup_terraform(dir);
     cmd(dir).args(["init", "--zone", "example.com"]).write_stdin("\n").assert().success();
-    cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
+    cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
         .assert().success();
 }
 
@@ -71,7 +71,7 @@ fn prompts_when_repo_already_set_and_aborts() {
 fn updates_routes_with_confirmation() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/new/*"])
         .write_stdin("y\n")
         .assert().success();
 
@@ -83,7 +83,7 @@ fn updates_routes_with_confirmation() {
 fn aborts_routes_update_when_declined() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/new/*"])
         .write_stdin("n\n")
         .assert().success().stdout(contains("Aborted"));
 
@@ -95,7 +95,7 @@ fn aborts_routes_update_when_declined() {
 fn updates_multiple_routes() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/a", "--routes=example.com/a/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/a", "--route=example.com/a/*"])
         .write_stdin("y\n")
         .assert().success();
 
@@ -127,7 +127,7 @@ fn errors_if_no_flags_provided() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
     cmd(&dir).args(["update", "landingpage"])
-        .assert().failure().stderr(contains("--repo or --routes"));
+        .assert().failure().stderr(contains("--repo or --route"));
 }
 
 #[test]
@@ -141,7 +141,7 @@ fn errors_if_register_missing() {
 fn updates_workers_tf_pattern_on_route_change() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/new/*"])
         .write_stdin("y\n")
         .assert().success();
 
@@ -155,7 +155,7 @@ fn updates_workers_tf_pattern_on_route_change() {
 fn update_increases_route_count_in_workers_tf() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/blog/", "--routes=example.com/blog/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/blog/", "--route=example.com/blog/*"])
         .write_stdin("y\n")
         .assert().success();
 
@@ -171,11 +171,11 @@ fn update_decreases_route_count_in_workers_tf() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
     // First expand to two routes
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/blog/", "--routes=example.com/blog/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/blog/", "--route=example.com/blog/*"])
         .write_stdin("y\n")
         .assert().success();
     // Then shrink back to one
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/blog/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/blog/*"])
         .write_stdin("y\n")
         .assert().success();
 
@@ -197,7 +197,7 @@ fn update_errors_on_drift_in_workers_tf() {
     );
     std::fs::write(&tf_path, drifted).unwrap();
 
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/new/*"])
         .write_stdin("y\n")
         .assert().failure().stderr(contains("drift")).stderr(contains("landingpage_0"));
 }
@@ -220,7 +220,7 @@ fn update_route_no_op_if_workers_tf_missing() {
     let dir = TempDir::new().unwrap();
     init_with_part(&dir);
     std::fs::remove_file(dir.path().join("terraform/workers.tf")).unwrap();
-    cmd(&dir).args(["update", "landingpage", "--routes=example.com/new/*"])
+    cmd(&dir).args(["update", "landingpage", "--route=example.com/new/*"])
         .write_stdin("y\n")
         .assert().success();
 }

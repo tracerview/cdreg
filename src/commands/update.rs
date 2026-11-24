@@ -13,7 +13,7 @@ fn confirm(prompt: &str) -> Result<bool> {
 
 pub fn run(name: String, repo: Option<String>, routes: Option<Vec<String>>) -> Result<()> {
     if repo.is_none() && routes.is_none() {
-        bail!("at least one of --repo or --routes must be provided");
+        bail!("at least one of --repo or --route must be provided");
     }
 
     if let Some(ref r) = repo {

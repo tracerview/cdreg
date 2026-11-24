@@ -47,7 +47,7 @@ cdreg init --zone example.com
 **Register a composite part as you create it:**
 
 ```sh
-cdreg add landingpage --worker cp-landingpage-static --routes "example.com/*"
+cdreg add landingpage --worker cp-landingpage-static --route "example.com/*"
 ```
 
 The part is added immediately with `repo: TBC`. Once the GitHub repo exists, assign it:
@@ -67,7 +67,7 @@ Parts with an unassigned repo are flagged with `[!]`.
 **Update routes when they change:**
 
 ```sh
-cdreg update landingpage --routes "example.com/" "example.com/*"
+cdreg update landingpage --route "example.com/" --route "example.com/*"
 ```
 
 **Remove a part that's been retired:**

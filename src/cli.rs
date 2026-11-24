@@ -23,7 +23,7 @@ pub enum Command {
         #[arg(long)]
         worker: String,
         /// Route pattern (repeatable)
-        #[arg(long = "routes", required = true)]
+        #[arg(long = "route", value_name = "ROUTE", required = true)]
         routes: Vec<String>,
     },
     /// Update repo or routes for a part
@@ -34,7 +34,7 @@ pub enum Command {
         #[arg(long)]
         repo: Option<String>,
         /// Route pattern (repeatable)
-        #[arg(long = "routes", num_args = 1..)]
+        #[arg(long = "route", value_name = "ROUTE", num_args = 1..)]
         routes: Option<Vec<String>>,
     },
     /// Remove a composite part
