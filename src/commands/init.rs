@@ -9,7 +9,7 @@ pub fn run(zone: String) -> Result<()> {
     }
 
     if Path::new(REGISTER_FILE).exists() {
-        bail!("{} already exists — delete it first if you want to reinitialise", REGISTER_FILE);
+        bail!("composite domain register already exists — run `cdreg reset` if you want to reinitialise");
     }
 
     let register = Register {
@@ -18,6 +18,6 @@ pub fn run(zone: String) -> Result<()> {
     };
 
     crate::register::save(&register)?;
-    println!("Created {}", REGISTER_FILE);
+    println!("Created composite domain register");
     Ok(())
 }

@@ -17,5 +17,6 @@ fn main() -> Result<()> {
         Command::Remove { name, yes } => commands::remove::run(name, yes),
         Command::Validate => commands::validate::run(),
         Command::Show => commands::show::run(),
+        Command::Reset => commands::reset::run(),
     }
 }

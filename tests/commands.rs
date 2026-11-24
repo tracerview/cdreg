@@ -4,6 +4,8 @@ mod add;
 mod init;
 #[path = "commands/remove.rs"]
 mod remove;
+#[path = "commands/reset.rs"]
+mod reset;
 #[path = "commands/set_repo.rs"]
 mod set_repo;
 #[path = "commands/set_routes.rs"]

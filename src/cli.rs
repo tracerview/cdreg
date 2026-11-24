@@ -56,4 +56,6 @@ pub enum Command {
     Validate,
     /// Print a summary of the register
     Show,
+    /// Delete the composite domain register
+    Reset,
 }
