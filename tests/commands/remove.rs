@@ -17,7 +17,7 @@ fn setup_terraform(dir: &TempDir) {
 fn init_with_part(dir: &TempDir) {
     setup_terraform(dir);
     cmd(dir).args(["init", "--zone", "example.com"]).write_stdin("\n").assert().success();
-    cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
 }
 

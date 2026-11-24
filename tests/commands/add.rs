@@ -29,7 +29,7 @@ fn adds_part_with_tbc_repo_and_correct_fields() {
     let dir = TempDir::new().unwrap();
     init(&dir);
     cmd(&dir)
-        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
 
     let val = register(&dir);
@@ -43,9 +43,9 @@ fn adds_part_with_tbc_repo_and_correct_fields() {
 fn errors_on_duplicate_name() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().failure().stderr(contains("already exists"));
 }
 
@@ -53,7 +53,7 @@ fn errors_on_duplicate_name() {
 fn errors_on_missing_cp_prefix() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "landingpage", "--worker", "landingpage-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "landingpage-static", "--routes", "example.com/*"])
         .assert().failure().stderr(contains("cp-"));
 }
 
@@ -71,7 +71,7 @@ fn accepts_multiple_routes() {
     init(&dir);
     cmd(&dir)
         .args(["add", "landingpage", "--worker", "cp-landingpage-static",
-               "--route", "example.com/a", "--route", "example.com/a/*"])
+               "--routes", "example.com/a", "--routes", "example.com/a/*"])
         .assert().success();
 
     let val = register(&dir);
@@ -83,14 +83,14 @@ fn accepts_multiple_routes() {
 fn errors_on_invalid_logical_name() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "Landing_Page", "--worker", "cp-lp-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "Landing_Page", "--worker", "cp-lp-static", "--routes", "example.com/*"])
         .assert().failure().stderr(contains("lowercase"));
 }
 
 #[test]
 fn errors_if_register_missing() {
     let dir = TempDir::new().unwrap();
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().failure().stderr(contains("init"));
 }
 
@@ -99,7 +99,7 @@ fn creates_workers_tf_and_adds_route() {
     let dir = TempDir::new().unwrap();
     init(&dir);
     cmd(&dir)
-        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
 
     let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
@@ -115,7 +115,7 @@ fn uses_first_route_in_workers_tf() {
     init(&dir);
     cmd(&dir)
         .args(["add", "landingpage", "--worker", "cp-landingpage-static",
-               "--route", "example.com/a", "--route", "example.com/a/*"])
+               "--routes", "example.com/a", "--routes", "example.com/a/*"])
         .assert().success();
 
     let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
@@ -132,7 +132,7 @@ fn errors_if_terraform_dir_missing_on_add() {
         "{\"zone\":\"example.com\",\"parts\":{}}\n",
     ).unwrap();
     cmd(&dir)
-        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().failure().stderr(contains("terraform/"));
 }
 
@@ -146,6 +146,6 @@ fn errors_on_workers_route_conflict() {
         "resource \"cloudflare_workers_route\" \"landingpage\" {\n  zone_id = cloudflare_zone.example.id\n}\n",
     ).unwrap();
     cmd(&dir)
-        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+        .args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().failure().stderr(contains("conflict")).stderr(contains("landingpage"));
 }
