@@ -25,8 +25,8 @@ fn add_accepts_valid_route_patterns() {
     init(&dir);
     cmd(&dir)
         .args(["add", "part1", "--worker", "cp-part1-static",
-               "--route", "example.com/*",
-               "--route", "*.example.com/path/*"])
+               "--routes", "example.com/*",
+               "--routes", "*.example.com/path/*"])
         .assert().success();
 }
 
@@ -37,7 +37,7 @@ fn add_rejects_infix_wildcard_in_path() {
     init(&dir);
     cmd(&dir)
         .args(["add", "part1", "--worker", "cp-part1-static",
-               "--route", "example.com/*.jpg"])
+               "--routes", "example.com/*.jpg"])
         .assert().failure()
         .stderr(predicates::str::contains("wildcard"));
 }
@@ -49,7 +49,7 @@ fn add_rejects_query_string_in_route() {
     init(&dir);
     cmd(&dir)
         .args(["add", "part1", "--worker", "cp-part1-static",
-               "--route", "example.com/?foo=bar"])
+               "--routes", "example.com/?foo=bar"])
         .assert().failure()
         .stderr(predicates::str::contains("query"));
 }
@@ -61,7 +61,7 @@ fn add_rejects_route_without_dot_in_hostname() {
     init(&dir);
     cmd(&dir)
         .args(["add", "part1", "--worker", "cp-part1-static",
-               "--route", "localhost/*"])
+               "--routes", "localhost/*"])
         .assert().failure()
         .stderr(predicates::str::contains("dot"));
 }

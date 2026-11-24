@@ -34,11 +34,16 @@ pub fn run(name: String, repo: Option<String>, routes: Option<Vec<String>>) -> R
 
     let mut reg = register::load()?;
 
-    let (current_repo, current_routes) = {
+    let (current_repo, current_routes, worker, zone_name) = {
         let part = reg.parts.get(&name).ok_or_else(|| {
             anyhow::anyhow!("part {:?} is not registered — run `cdreg add` first", name)
         })?;
-        (part.repo.clone(), part.routes.clone())
+        (
+            part.repo.clone(),
+            part.routes.clone(),
+            part.worker.clone(),
+            crate::terraform::infer_zone_name(&reg.zone),
+        )
     };
 
     if let Some(ref new_repo) = repo {
@@ -59,11 +64,18 @@ pub fn run(name: String, repo: Option<String>, routes: Option<Vec<String>>) -> R
         }
     }
 
+    let new_routes_snapshot = routes.as_ref().map(|rs| rs.clone());
+
     let part = reg.parts.get_mut(&name).unwrap();
     if let Some(r) = repo { part.repo = r; }
     if let Some(r) = routes { part.routes = r; }
 
     register::save(&reg)?;
     println!("Updated {:?}", name);
+
+    if let Some(ref new_routes) = new_routes_snapshot {
+        crate::terraform::update_workers_routes(&name, &zone_name, new_routes, &worker)?;
+    }
+
     Ok(())
 }

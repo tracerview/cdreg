@@ -8,12 +8,6 @@ use std::path::Path;
 const TERRAFORM_MAIN: &str = "terraform/main.tf";
 const APEX_MARKER: &str = "resource \"cloudflare_record\" \"apex\"";
 
-fn infer_zone_name(zone: &str) -> String {
-    let parts: Vec<&str> = zone.split('.').collect();
-    let raw = if parts.len() >= 2 { parts[parts.len() - 2] } else { zone };
-    raw.replace('-', "_")
-}
-
 fn prompt_with_default(label: &str, default: &str) -> Result<String> {
     print!("{} [{}]: ", label, default);
     io::stdout().flush()?;
@@ -74,7 +68,7 @@ pub fn run(zone: String) -> Result<()> {
         .with_context(|| format!("failed to read {TERRAFORM_MAIN}"))?;
 
     if tf_content.contains(APEX_MARKER) {
-        let inferred = infer_zone_name(&zone);
+        let inferred = crate::terraform::infer_zone_name(&zone);
         match find_apex_zone_name(&tf_content) {
             Some(ref z) if *z == inferred => {
                 println!("✓ apex A record already configured in terraform/main.tf");
@@ -91,7 +85,7 @@ pub fn run(zone: String) -> Result<()> {
             }
         }
     } else {
-        let inferred = infer_zone_name(&zone);
+        let inferred = crate::terraform::infer_zone_name(&zone);
         let zone_name = prompt_with_default("Terraform zone name", &inferred)?;
         let block = apex_record_block(&zone_name);
         let mut file = OpenOptions::new()

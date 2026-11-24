@@ -2,6 +2,7 @@ mod cli;
 mod commands;
 mod register;
 mod route;
+mod terraform;
 
 use anyhow::Result;
 use clap::Parser;

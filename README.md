@@ -47,7 +47,7 @@ cdreg init --zone example.com
 **Register a composite part as you create it:**
 
 ```sh
-cdreg add landingpage --worker cp-landingpage-static --route "example.com/*"
+cdreg add landingpage --worker cp-landingpage-static --routes "example.com/*"
 ```
 
 The part is added immediately with `repo: TBC`. Once the GitHub repo exists, assign it:

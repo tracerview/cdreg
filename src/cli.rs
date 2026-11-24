@@ -23,7 +23,7 @@ pub enum Command {
         #[arg(long)]
         worker: String,
         /// Route pattern (repeatable)
-        #[arg(long = "route", required = true)]
+        #[arg(long = "routes", required = true)]
         routes: Vec<String>,
     },
     /// Update repo or routes for a part

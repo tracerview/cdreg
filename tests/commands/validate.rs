@@ -28,7 +28,7 @@ fn write_register(dir: &TempDir, content: &str) {
 fn valid_register_exits_zero() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
     cmd(&dir).args(["update", "landingpage", "--repo=tracerview/repo"]).assert().success();
     cmd(&dir).arg("validate").assert().success().stdout(contains("valid"));
@@ -38,7 +38,7 @@ fn valid_register_exits_zero() {
 fn tbc_repo_warns_but_exits_zero() {
     let dir = TempDir::new().unwrap();
     init(&dir);
-    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(&dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
     cmd(&dir).arg("validate")
         .assert().success()

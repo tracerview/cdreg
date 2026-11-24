@@ -23,5 +23,8 @@ pub fn run(name: String, yes: bool) -> Result<()> {
     reg.parts.remove(&name);
     register::save(&reg)?;
     println!("Removed part {:?}", name);
+
+    crate::terraform::remove_workers_routes(&name)?;
+
     Ok(())
 }

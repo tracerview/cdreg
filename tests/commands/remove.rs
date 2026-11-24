@@ -17,7 +17,7 @@ fn setup_terraform(dir: &TempDir) {
 fn init_with_part(dir: &TempDir) {
     setup_terraform(dir);
     cmd(dir).args(["init", "--zone", "example.com"]).write_stdin("\n").assert().success();
-    cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--route", "example.com/*"])
+    cmd(dir).args(["add", "landingpage", "--worker", "cp-landingpage-static", "--routes", "example.com/*"])
         .assert().success();
 }
 
@@ -73,4 +73,22 @@ fn errors_if_register_missing() {
     let dir = TempDir::new().unwrap();
     cmd(&dir).args(["remove", "landingpage", "--yes"])
         .assert().failure().stderr(contains("init"));
+}
+
+#[test]
+fn removes_workers_route_from_workers_tf() {
+    let dir = TempDir::new().unwrap();
+    init_with_part(&dir);
+    cmd(&dir).args(["remove", "landingpage", "--yes"]).assert().success();
+
+    let tf = std::fs::read_to_string(dir.path().join("terraform/workers.tf")).unwrap();
+    assert!(!tf.contains("resource \"cloudflare_workers_route\" \"landingpage_0\""));
+}
+
+#[test]
+fn remove_succeeds_if_workers_tf_missing() {
+    let dir = TempDir::new().unwrap();
+    init_with_part(&dir);
+    std::fs::remove_file(dir.path().join("terraform/workers.tf")).unwrap();
+    cmd(&dir).args(["remove", "landingpage", "--yes"]).assert().success();
 }
