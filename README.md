@@ -37,14 +37,32 @@ Run `cdreg -h` for a full command reference, or `cdreg <command> -h` for details
 
 ## 2. Typical workflow
 
-**Start a new domain register:**
+**2.1. Start a new domain register:**
 
 ```sh
 cd my-domain-repo
 cdreg init --zone example.com
 ```
 
-**Register a composite part as you create it:**
+This also adds an Apex A record to `terraform/main.tf`. When routing via wrangler (cfops default), this is created automatically — since this composite method manages routing via a central Terraform config, `init` adds it explicitly:
+
+```hcl
+resource "cloudflare_record" "apex" {
+  zone_id = cloudflare_zone.<ZONE_NAME>.id
+  name    = "@"
+  type    = "A"
+  content = "192.0.2.1"  # dummy IP — Cloudflare proxies it, never actually hit
+  proxied = true
+}
+```
+
+Verify with:
+
+```sh
+dig <DOMAIN> A
+```
+
+**2.2. Register a composite part as you create it:**
 
 ```sh
 cdreg add landingpage --worker cp-landingpage-static --route "example.com/*"
@@ -56,7 +74,7 @@ The part is added immediately with `repo: TBC`. Once the GitHub repo exists, ass
 cdreg update landingpage --repo gh-org/repo-landingpage
 ```
 
-**Check the current state at any time:**
+**2.3. Check the current state at any time:**
 
 ```sh
 cdreg show
@@ -64,13 +82,13 @@ cdreg show
 
 Parts with an unassigned repo are flagged with `[!]`.
 
-**Update routes when they change:**
+**2.4. Update routes when they change:**
 
 ```sh
 cdreg update landingpage --route "example.com/" --route "example.com/*"
 ```
 
-**Remove a part that's been retired:**
+**2.5. Remove a part that's been retired:**
 
 ```sh
 cdreg remove landingpage
@@ -78,13 +96,13 @@ cdreg remove landingpage
 
 Pass `--yes` to skip the confirmation prompt.
 
-**Delete the register entirely:**
+**2.6. Delete the register entirely:**
 
 ```sh
 cdreg reset
 ```
 
-**Validate before committing:**
+**2.7. Validate before committing:**
 
 ```sh
 cdreg validate
