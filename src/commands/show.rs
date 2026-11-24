@@ -12,13 +12,13 @@ pub fn run() -> Result<()> {
     }
 
     // Column widths
-    let name_w = reg.parts.keys().map(|k| k.len()).max().unwrap_or(4).max(4);
+    let name_w = reg.parts.keys().map(|k| k.len()).max().unwrap_or(9).max(9);
     let worker_w = reg.parts.values().map(|p| p.worker.len()).max().unwrap_or(6).max(6);
     let repo_w = reg.parts.values().map(|p| p.repo.len()).max().unwrap_or(4).max(4);
 
     println!(
         "{:<name_w$}  {:<worker_w$}  {:<repo_w$}  routes",
-        "NAME", "WORKER", "REPO",
+        "PART-NAME", "WORKER", "REPO",
         name_w = name_w,
         worker_w = worker_w,
         repo_w = repo_w,
