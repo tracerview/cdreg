@@ -89,6 +89,9 @@ resource "cloudflare_workers_route" "landingpage_1" {
 }
 ```
 
+> **NOTE:** The resource name (`"<LOGICAL-NAME>"`) is used to structure and identify resources within this file only — it is not applied to Cloudflare. Only `script_name` is the Cloudflare
+worker name. Add one resource block per route.
+
 **2.3. Check the current state at any time:**
 
 ```sh
